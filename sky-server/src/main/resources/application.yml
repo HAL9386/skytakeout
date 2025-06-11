@@ -28,6 +28,7 @@ logging:
         mapper: debug
         service: info
         controller: info
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
 
 sky:
   jwt:
