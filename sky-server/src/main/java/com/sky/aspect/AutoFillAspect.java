@@ -28,7 +28,10 @@ public class AutoFillAspect {
     // 获取到当前被拦截的方法上的数据库操作类型
     MethodSignature signature = (MethodSignature) joinPoint.getSignature();
     AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class);
-    OperationType operationType = autoFill.value();
+    OperationType operationType = null;
+    if (autoFill != null) {
+      operationType = autoFill.value();
+    }
     // 获取到当前被拦截的方法参数--实体对象
     Object[] args = joinPoint.getArgs();
     if (args == null || args.length == 0) {
@@ -52,7 +55,7 @@ public class AutoFillAspect {
         setCreateUser.invoke(entity, currentId);
         setUpdateUser.invoke(entity, currentId);
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error(e.getMessage());
       }
     } else if (operationType == OperationType.UPDATE) {
       // 为2个公共字段赋值
@@ -63,7 +66,7 @@ public class AutoFillAspect {
         setUpdateTime.invoke(entity, now);
         setUpdateUser.invoke(entity, currentId);
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error(e.getMessage());
       }
     }
   }
