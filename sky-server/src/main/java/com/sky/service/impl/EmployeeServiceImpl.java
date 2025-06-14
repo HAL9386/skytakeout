@@ -25,8 +25,11 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-  @Autowired
-  private EmployeeMapper employeeMapper;
+  private final EmployeeMapper employeeMapper;
+
+  public EmployeeServiceImpl(EmployeeMapper employeeMapper) {
+    this.employeeMapper = employeeMapper;
+  }
 
   /**
    * 员工登录

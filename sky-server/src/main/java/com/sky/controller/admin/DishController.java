@@ -19,8 +19,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/dish")
 public class DishController {
-  @Autowired
-  private DishService dishService;
+  private final DishService dishService;
+
+  public DishController(DishService dishService) {
+    this.dishService = dishService;
+  }
 
   /**
    * 新增菜品

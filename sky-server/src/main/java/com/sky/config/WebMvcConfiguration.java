@@ -27,8 +27,11 @@ import java.util.List;
 @Slf4j
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
-  @Autowired
-  private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
+  private final JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
+
+  public WebMvcConfiguration(JwtTokenAdminInterceptor jwtTokenAdminInterceptor) {
+    this.jwtTokenAdminInterceptor = jwtTokenAdminInterceptor;
+  }
 
   /**
    * 注册自定义拦截器

@@ -23,8 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
-  @Autowired
-  private JwtProperties jwtProperties;
+  private final JwtProperties jwtProperties;
+
+  public JwtTokenAdminInterceptor(JwtProperties jwtProperties) {
+    this.jwtProperties = jwtProperties;
+  }
 
   /**
    * 校验jwt

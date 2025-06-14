@@ -24,14 +24,17 @@ import java.util.List;
 
 @Service
 public class DishServiceImpl implements DishService {
-  @Autowired
-  private DishMapper dishMapper;
+  private final DishMapper dishMapper;
 
-  @Autowired
-  private DishFlavorMapper dishFlavorMapper;
+  private final DishFlavorMapper dishFlavorMapper;
 
-  @Autowired
-  private SetmealDishMapper setmealDishMapper;
+  private final SetmealDishMapper setmealDishMapper;
+
+  public DishServiceImpl(DishMapper dishMapper, DishFlavorMapper dishFlavorMapper, SetmealDishMapper setmealDishMapper) {
+    this.dishMapper = dishMapper;
+    this.dishFlavorMapper = dishFlavorMapper;
+    this.setmealDishMapper = setmealDishMapper;
+  }
 
   /**
    * 新增菜品，同时保存对应的口味数据

@@ -20,8 +20,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admin/common")
 public class CommonController {
-  @Autowired
-  private AliOssUtil aliOssUtil;
+  private final AliOssUtil aliOssUtil;
+
+  public CommonController(AliOssUtil aliOssUtil) {
+    this.aliOssUtil = aliOssUtil;
+  }
 
   @ApiOperation("文件上传")
   @PostMapping("/upload")
