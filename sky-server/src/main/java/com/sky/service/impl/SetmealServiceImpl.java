@@ -2,24 +2,36 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.entity.Setmeal;
+import com.sky.entity.SetmealDish;
+import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
 import com.sky.vo.SetmealVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class SetmealServiceImpl implements SetmealService {
 
   private final SetmealMapper setmealMapper;
 
-  public SetmealServiceImpl(SetmealMapper setmealMapper) {
+  private final SetmealDishMapper setmealDishMapper;
+
+  public SetmealServiceImpl(SetmealMapper setmealMapper, SetmealDishMapper setmealDishMapper) {
     this.setmealMapper = setmealMapper;
+    this.setmealDishMapper = setmealDishMapper;
   }
 
   /**
    * 套餐分页查询
+   *
    * @param setmealPageQueryDTO 分页查询条件
    * @return 分页查询结果
    */
@@ -28,5 +40,23 @@ public class SetmealServiceImpl implements SetmealService {
     PageHelper.startPage(setmealPageQueryDTO.getPage(), setmealPageQueryDTO.getPageSize());
     Page<SetmealVO> page = setmealMapper.pageQuery(setmealPageQueryDTO);
     return new PageResult<>(page.getTotal(), page.getResult());
+  }
+
+  /**
+   * 新增套餐
+   *
+   * @param setmealDTO 新增套餐信息
+   */
+  @Transactional(rollbackFor = {Exception.class})
+  @Override
+  public void save(SetmealDTO setmealDTO) {
+    Setmeal setmeal = new Setmeal();
+    BeanUtils.copyProperties(setmealDTO, setmeal);
+    setmealMapper.insert(setmeal);
+    List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+    if (setmealDishes != null) {
+      setmealDishes.forEach(setmealDish -> setmealDish.setSetmealId(setmeal.getId()));
+      setmealDishMapper.insertBatch(setmealDishes);
+    }
   }
 }
