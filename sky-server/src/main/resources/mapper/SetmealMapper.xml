@@ -8,7 +8,7 @@
   </insert>
 
   <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
-    select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name
+    select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name as category_name
     from setmeal as s left join category as c on s.category_id = c.id
     <where>
       <if test="name != null and name != ''">
