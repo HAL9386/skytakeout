@@ -118,4 +118,19 @@ public class SetmealServiceImpl implements SetmealService {
     setmealVO.setSetmealDishes(setmealDishes);
     return setmealVO;
   }
+
+  /**
+   * 起售停售套餐
+   *
+   * @param status 状态 0:停售 1:起售
+   * @param id     套餐id
+   */
+  @Override
+  public void updateStatus(Integer status, Long id) {
+    Setmeal setmeal = Setmeal.builder()
+      .id(id)
+      .status(status)
+      .build();
+    setmealMapper.update(setmeal);
+  }
 }

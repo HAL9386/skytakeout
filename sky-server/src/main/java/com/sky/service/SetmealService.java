@@ -41,4 +41,12 @@ public interface SetmealService {
    * @return 套餐信息
    */
   SetmealVO getByIdWithDishes(Long id);
+
+  /**
+   * 起售停售
+   *
+   * @param status 状态 0:停售 1:起售
+   * @param id 套餐id
+   */
+  void updateStatus(Integer status, Long id);
 }
