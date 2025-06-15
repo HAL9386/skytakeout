@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.constant.MessageConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
@@ -10,6 +11,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "套餐相关接口")
 @Slf4j
@@ -48,6 +51,23 @@ public class SetmealController {
   public Result<Object> save(@RequestBody SetmealDTO setmealDTO){
     log.info("新增套餐：{}", setmealDTO);
     setmealService.save(setmealDTO);
+    return Result.success();
+  }
+
+  /**
+   * 批量删除套餐
+   *
+   * @param ids 套餐id列表
+   * @return 删除结果
+   */
+  @ApiOperation("批量删除套餐")
+  @DeleteMapping
+  public Result<Object> delete(@RequestParam List<Long> ids){
+    log.info("批量删除套餐：{}", ids);
+    if (ids == null || ids.isEmpty()){
+      return Result.error(MessageConstant.SETMEAL_NOT_SELECTED);
+    }
+    setmealService.deleteBatch(ids);
     return Result.success();
   }
 }

@@ -6,6 +6,12 @@
     insert into setmeal (category_id, name, price, status, description, image, create_time, update_time, create_user, update_user)
     values (#{categoryId}, #{name}, #{price}, #{status}, #{description}, #{image}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
   </insert>
+  <delete id="deleteBatch">
+    delete from setmeal where id in
+    <foreach collection="list" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
 
   <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
     select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name as category_name
