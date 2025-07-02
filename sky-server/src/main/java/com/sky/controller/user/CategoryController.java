@@ -33,6 +33,7 @@ public class CategoryController {
   @GetMapping("/list")
   public Result<List<Category>> list(Integer type) {
 //    log.info("C端查询分类：{}", type == 1 ? "菜品" : "套餐");
+    log.info("C端查询分类：{}", type);
     List<Category> list = categoryService.list(type);
     return Result.success(list);
   }
