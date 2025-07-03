@@ -18,6 +18,8 @@ public class RedisConfiguration {
     redisTemplate.setConnectionFactory(redisConnectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
     redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+    redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+    redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
     return redisTemplate;
   }
 }
