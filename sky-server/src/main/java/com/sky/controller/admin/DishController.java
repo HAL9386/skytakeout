@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.constant.RedisConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
@@ -9,6 +10,7 @@ import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +21,20 @@ import java.util.List;
 @RequestMapping("/admin/dish")
 public class DishController {
   private final DishService dishService;
+  private final RedisTemplate<String, Object> redisTemplate;
 
-  public DishController(DishService dishService) {
+  public DishController(DishService dishService, RedisTemplate<String, Object> redisTemplate) {
     this.dishService = dishService;
+    this.redisTemplate = redisTemplate;
+  }
+
+  /**
+   * 清理redis缓存
+   *
+   * @param keyPattern 缓存键的模式
+   */
+  private void clearRedisCache(String keyPattern) {
+    redisTemplate.delete(redisTemplate.keys(keyPattern));
   }
 
   /**
@@ -35,6 +48,9 @@ public class DishController {
   public Result<Object> save(@RequestBody DishDTO dishDTO) {
     log.info("新增菜品：{}", dishDTO);
     dishService.saveWithFlavor(dishDTO);
+    String key = RedisConstant.DISH_LIST_KEY_PREFIX + dishDTO.getCategoryId();
+    clearRedisCache(key);
+    log.info("清空redis菜品缓存，分类id: {}", dishDTO.getCategoryId());
     return Result.success();
   }
 
@@ -63,6 +79,9 @@ public class DishController {
   public Result<Object> delete(@RequestParam List<Long> ids) {
     log.info("批量删除菜品：{}", ids);
     dishService.deleteBatch(ids);
+    String keyPattern = RedisConstant.DISH_LIST_KEY_PREFIX + "*";
+    clearRedisCache(keyPattern);
+    log.info("清空redis所有菜品缓存");
     return Result.success();
   }
 
@@ -91,6 +110,9 @@ public class DishController {
   public Result<Object> update(@RequestBody DishDTO dishDTO) {
     log.info("修改菜品：{}", dishDTO);
     dishService.updateWithFlavor(dishDTO);
+    String key = RedisConstant.DISH_LIST_KEY_PREFIX + dishDTO.getCategoryId();
+    clearRedisCache(key);
+    log.info("清空redis菜品缓存，分类id: {}", dishDTO.getCategoryId());
     return Result.success();
   }
 
@@ -106,6 +128,9 @@ public class DishController {
   public Result<Object> status(@PathVariable Integer status, Long id){
     log.info("修改菜品状态：设置status: {}, 菜品id: {}", status, id);
     dishService.startOrStop(status, id);
+    String key = RedisConstant.DISH_LIST_KEY_PREFIX + "*";
+    clearRedisCache(key);
+    log.info("清空redis所有菜品缓存");
     return Result.success();
   }
 
