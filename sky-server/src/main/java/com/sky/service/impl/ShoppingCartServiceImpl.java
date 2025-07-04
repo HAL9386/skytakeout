@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -72,5 +73,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
       // 添加到购物车
       shoppingCartMapper.insert(shoppingCart);
     }
+  }
+
+  /**
+   * 查看购物车
+   *
+   * @return 购物车列表
+   */
+  @Override
+  public List<ShoppingCart> list() {
+    return shoppingCartMapper.list(BaseContext.getCurrentId());
   }
 }

@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface ShoppingCartMapper {
 
@@ -35,4 +37,13 @@ public interface ShoppingCartMapper {
    */
   @Update("update shopping_cart set number = #{number} where id = #{id}")
   void updateNumberById(ShoppingCart shoppingCart);
+
+  /**
+   * 根据id查询购物车数据
+   *
+   * @param userId 主键
+   * @return 购物车对象
+   */
+  @Select("select * from shopping_cart where user_id = #{userId}")
+  List<ShoppingCart> list(Long userId);
 }
