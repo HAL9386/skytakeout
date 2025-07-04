@@ -41,10 +41,24 @@ public class ShoppingCartController {
    *
    * @return Result
    */
+  @ApiOperation("查看购物车")
   @GetMapping("/list")
   public Result<List<ShoppingCart>> list() {
     log.info("查询购物车列表");
     List<ShoppingCart> shoppingCartList = shoppingCartService.list();
     return Result.success(shoppingCartList);
+  }
+
+  /**
+   * 清空购物车
+   *
+   * @return Result
+   */
+  @ApiOperation("清空购物车")
+  @DeleteMapping("/clean")
+  public Result<Object> clear() {
+    log.info("清空购物车");
+    shoppingCartService.clear();
+    return Result.success();
   }
 }
