@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.MessageConstant;
+import com.sky.constant.RedisConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
@@ -10,6 +11,7 @@ import com.sky.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +49,7 @@ public class SetmealController {
    * @return 新增结果
    */
   @ApiOperation("新增套餐")
+  @CacheEvict(cacheNames = RedisConstant.SETMEAL_LIST_KEY, key = "#setmealDTO.categoryId")
   @PostMapping
   public Result<Object> save(@RequestBody SetmealDTO setmealDTO){
     log.info("新增套餐：{}", setmealDTO);
@@ -61,6 +64,7 @@ public class SetmealController {
    * @return 删除结果
    */
   @ApiOperation("批量删除套餐")
+  @CacheEvict(cacheNames = RedisConstant.SETMEAL_LIST_KEY, allEntries = true)
   @DeleteMapping
   public Result<Object> delete(@RequestParam List<Long> ids){
     log.info("批量删除套餐：{}", ids);
@@ -92,6 +96,7 @@ public class SetmealController {
    * @return 修改结果
    */
   @ApiOperation("修改套餐")
+  @CacheEvict(cacheNames = RedisConstant.SETMEAL_LIST_KEY, key = "#setmealDTO.categoryId")
   @PutMapping
   public Result<Object> update(@RequestBody SetmealDTO setmealDTO){
     log.info("修改套餐：{}", setmealDTO);
@@ -107,6 +112,7 @@ public class SetmealController {
    * @return 起售/停售结果
    */
   @ApiOperation("起售停售套餐")
+  @CacheEvict(cacheNames = RedisConstant.SETMEAL_LIST_KEY, allEntries = true)
   @PostMapping("/status/{status}")
   public Result<Object> status(@PathVariable Integer status, Long id){
     log.info("修改套餐状态：设置status: {}，菜品id: {}", status, id);
