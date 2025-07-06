@@ -83,4 +83,12 @@ public interface DishMapper {
    * @return 菜品列表
    */
   List<Dish> list(Dish dish);
+
+  /**
+   * 关联查询菜品和口味
+   *
+   * @param dish 菜品对象
+   * @return 菜品列表
+   */
+  List<DishVO> listWithFlavor(Dish dish);
 }

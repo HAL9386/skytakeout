@@ -24,7 +24,7 @@ import java.util.List;
 
 @Service
 public class DishServiceImpl implements DishService {
-  private final DishMapper dishMapper;
+  protected final DishMapper dishMapper;
 
   private final DishFlavorMapper dishFlavorMapper;
 
