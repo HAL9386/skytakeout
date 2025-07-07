@@ -69,4 +69,46 @@ public class OrderController {
     PageResult<OrderVO> pageResult = orderService.pageQuery(ordersPageQueryDTO);
     return Result.success(pageResult);
   }
+
+  /**
+   * C端查询订单详情
+   *
+   * @param id 订单id
+   * @return orderVO 订单详情
+   */
+  @ApiOperation("C端查询订单详情")
+  @GetMapping("orderDetail/{id}")
+  public Result<OrderVO> getById(@PathVariable Long id) {
+    log.info("根据订单id查询订单详情：{}", id);
+    OrderVO orderVO = orderService.getById(id);
+    return Result.success(orderVO);
+  }
+
+  /**
+   * C端取消订单
+   *
+   * @param id 订单id
+   * @return 取消订单结果
+   */
+  @ApiOperation("C端取消订单")
+  @PutMapping("/cancel/{id}")
+  public Result<Object> cancel(@PathVariable Long id) {
+    log.info("取消订单：{}", id);
+    orderService.cancel(id);
+    return Result.success();
+  }
+
+  /**
+   * C端再来一单
+   *
+   * @param id 订单id
+   * @return 再来一单结果
+   */
+  @ApiOperation("C端再来一单")
+  @PostMapping("/repetition/{id}")
+  public Result<Object> repetition(@PathVariable Long id) {
+    log.info("再来一单：{}", id);
+    orderService.repetition(id);
+    return Result.success();
+  }
 }

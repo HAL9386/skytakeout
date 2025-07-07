@@ -39,4 +39,26 @@ public interface OrderService {
    * @return PageResult<OrderVO> 订单查询结果
    */
   PageResult<OrderVO> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+
+  /**
+   * 根据id查询订单
+   *
+   * @param id 订单id
+   * @return OrderVO 订单信息
+   */
+  OrderVO getById(Long id);
+
+  /**
+   * 取消订单
+   *
+   * @param id 订单id
+   */
+  void cancel(Long id);
+
+  /**
+   * 再来一单
+   *
+   * @param id 订单id
+   */
+  void repetition(Long id);
 }

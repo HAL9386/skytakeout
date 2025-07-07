@@ -167,4 +167,58 @@ public class OrderServiceImpl implements OrderService {
     Page<OrderVO> page = orderMapper.pageQuery(ordersPageQueryDTO);
     return new PageResult<>(page.getTotal(), page.getResult());
   }
+
+  /**
+   * 根据订单id查询订单详情
+   *
+   * @param id 订单id
+   * @return 订单详情
+   */
+  @Override
+  public OrderVO getById(Long id) {
+    return orderMapper.getById(id);
+  }
+
+  /**
+   * 取消订单
+   *
+   * @param id 订单id
+   */
+  @Override
+  public void cancel(Long id) {
+    Orders order = Orders.builder()
+      .id(id)
+      .status(Orders.CANCELLED)
+      .build();
+    orderMapper.update(order);
+  }
+
+  /**
+   * 再来一单
+   *
+   * @param id 订单id
+   */
+  @Transactional(rollbackFor = {Exception.class})
+  @Override
+  public void repetition(Long id) {
+    OrderVO orderWithDetail = orderMapper.getById(id);
+    Orders order = new Orders();
+    BeanUtils.copyProperties(orderWithDetail, order);
+    order.setId(null);
+    order.setNumber(String.valueOf(System.currentTimeMillis()));
+    order.setStatus(Orders.PENDING_PAYMENT);
+    order.setOrderTime(LocalDateTime.now());
+    order.setPayStatus(Orders.UN_PAID);
+    orderMapper.insert(order);
+    List<OrderDetail> orderDetailList = orderWithDetail.getOrderDetailList();
+    List<OrderDetail> newOrderDetailList = new ArrayList<>();
+    for (OrderDetail orderDetail : orderDetailList) {
+      OrderDetail newOrderDetail = new OrderDetail();
+      BeanUtils.copyProperties(orderDetail, newOrderDetail);
+      newOrderDetail.setId(null);
+      newOrderDetail.setOrderId(order.getId());
+      newOrderDetailList.add(newOrderDetail);
+    }
+    orderDetailMapper.insertBatch(newOrderDetailList);
+  }
 }

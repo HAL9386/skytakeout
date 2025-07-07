@@ -60,6 +60,13 @@
         and o.status = #{status}
       </if>
   </select>
+  <select id="getById" resultType="com.sky.vo.OrderVO" resultMap="ordersWithDetail">
+    select o.*, od.id as order_detail_id, od.name as order_detail_name, od.image, od.dish_id, od.setmeal_id,
+           od.dish_flavor, od.number as order_detail_number, od.amount as order_detail_amount
+    from orders as o
+    left join order_detail as od on o.id = od.order_id
+    where o.id = #{id}
+  </select>
   <resultMap id="ordersWithDetail" type="com.sky.vo.OrderVO">
     <id property="id" column="id"/>
     <result property="number" column="number"/>
