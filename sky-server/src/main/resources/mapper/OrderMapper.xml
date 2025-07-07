@@ -44,4 +44,57 @@
     </set>
     where id = #{id}
   </update>
+  <select id="pageQuery" resultType="com.sky.vo.OrderVO" resultMap="ordersWithDetail">
+    select o.*, od.id as order_detail_id, od.name as order_detail_name, od.image, od.dish_id, od.setmeal_id,
+           od.dish_flavor, od.number as order_detail_number, od.amount as order_detail_amount
+    from orders as o
+    left join order_detail as od on o.id = od.order_id
+    where o.user_id = #{userId}
+      <if test="number != null and number != '' ">
+        and o.number like concat('%',#{number},'%')
+      </if>
+      <if test="phone != null and phone != '' ">
+        and o.phone like concat('%',#{phone},'%')
+      </if>
+      <if test="status != null ">
+        and o.status = #{status}
+      </if>
+  </select>
+  <resultMap id="ordersWithDetail" type="com.sky.vo.OrderVO">
+    <id property="id" column="id"/>
+    <result property="number" column="number"/>
+    <result property="status" column="status"/>
+    <result property="userId" column="user_id"/>
+    <result property="addressBookId" column="address_book_id"/>
+    <result property="orderTime" column="order_time"/>
+    <result property="checkoutTime" column="checkout_time"/>
+    <result property="payMethod" column="pay_method"/>
+    <result property="payStatus" column="pay_status"/>
+    <result property="amount" column="amount"/>
+    <result property="remark" column="remark"/>
+    <result property="phone" column="phone"/>
+    <result property="address" column="address"/>
+    <result property="userName" column="user_name"/>
+    <result property="consignee" column="consignee"/>
+    <result property="cancelReason" column="cancel_reason"/>
+    <result property="rejectionReason" column="rejection_reason"/>
+    <result property="cancelTime" column="cancel_time"/>
+    <result property="estimatedDeliveryTime" column="estimated_delivery_time"/>
+    <result property="deliveryStatus" column="delivery_status"/>
+    <result property="deliveryTime" column="delivery_time"/>
+    <result property="packAmount" column="pack_amount"/>
+    <result property="tablewareNumber" column="tableware_number"/>
+    <result property="tablewareStatus" column="tableware_status"/>
+    <collection property="orderDetailList" ofType="com.sky.entity.OrderDetail">
+      <id property="id" column="order_detail_id"/>
+      <result property="name" column="order_detail_name"/>
+      <result property="image" column="order_detail_image"/>
+      <result property="orderId" column="order_id"/>
+      <result property="dishId" column="dish_id"/>
+      <result property="setmealId" column="setmeal_id"/>
+      <result property="dishFlavor" column="dish_flavor"/>
+      <result property="number" column="order_detail_number"/>
+      <result property="amount" column="order_detail_amount"/>
+    </collection>
+  </resultMap>
 </mapper>
