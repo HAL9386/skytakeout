@@ -49,7 +49,10 @@
            od.dish_flavor, od.number as order_detail_number, od.amount as order_detail_amount
     from orders as o
     left join order_detail as od on o.id = od.order_id
-    where o.user_id = #{userId}
+    <where>
+      <if test="userId != null">
+        and o.user_id = #{userId}
+      </if>
       <if test="number != null and number != '' ">
         and o.number like concat('%',#{number},'%')
       </if>
@@ -59,6 +62,10 @@
       <if test="status != null ">
         and o.status = #{status}
       </if>
+      <if test="beginTime != null and endTime != null">
+        and o.order_time between #{beginTime} and #{endTime}
+      </if>
+    </where>
   </select>
   <select id="getById" resultType="com.sky.vo.OrderVO" resultMap="ordersWithDetail">
     select o.*, od.id as order_detail_id, od.name as order_detail_name, od.image, od.dish_id, od.setmeal_id,
