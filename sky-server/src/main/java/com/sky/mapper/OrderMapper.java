@@ -47,4 +47,13 @@ public interface OrderMapper {
    * @return 订单VO对象
    */
   OrderVO getById(Long id);
+
+  /**
+   * 根据订单状态统计订单数量
+   *
+   * @param status 订单状态
+   * @return 订单数量
+   */
+  @Select("select count(*) from orders where status = #{status}")
+  Integer countByStatus(Integer status);
 }

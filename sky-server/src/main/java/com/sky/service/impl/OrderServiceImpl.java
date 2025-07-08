@@ -5,9 +5,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersPaymentDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
@@ -17,6 +15,7 @@ import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
@@ -220,5 +219,100 @@ public class OrderServiceImpl implements OrderService {
       newOrderDetailList.add(newOrderDetail);
     }
     orderDetailMapper.insertBatch(newOrderDetailList);
+  }
+
+  /**
+   * 订单统计
+   *
+   * @return 订单统计信息
+   */
+  @Override
+  public OrderStatisticsVO statistics() {
+    Integer toBeConfirmed = orderMapper.countByStatus(Orders.TO_BE_CONFIRMED);
+    Integer confirmed = orderMapper.countByStatus(Orders.CONFIRMED);
+    Integer deliveryInProgress = orderMapper.countByStatus(Orders.DELIVERY_IN_PROGRESS);
+    return OrderStatisticsVO.builder()
+      .toBeConfirmed(toBeConfirmed)
+      .confirmed(confirmed)
+      .deliveryInProgress(deliveryInProgress)
+      .build();
+  }
+
+  /**
+   * 接单
+   *
+   * @param id 订单id
+   */
+  @Override
+  public void confirm(Long id) {
+    orderMapper.update(Orders.builder()
+      .id(id)
+      .status(Orders.CONFIRMED)
+      .build()
+    );
+  }
+
+  /**
+   * 拒单
+   *
+   * @param ordersRejectionDTO 订单拒单信息
+   */
+  @Override
+  public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
+    orderMapper.update(
+      Orders.builder()
+        .id(ordersRejectionDTO.getId())
+        .status(Orders.CANCELLED)
+        .cancelTime(LocalDateTime.now())
+        .rejectionReason(ordersRejectionDTO.getRejectionReason())
+        .build()
+    );
+  }
+
+  /**
+   * 管理端取消订单
+   *
+   * @param ordersCancelDTO 订单取消信息
+   */
+  @Override
+  public void adminCancel(OrdersCancelDTO ordersCancelDTO) {
+    orderMapper.update(
+      Orders.builder()
+        .id(ordersCancelDTO.getId())
+        .status(Orders.CANCELLED)
+        .cancelTime(LocalDateTime.now())
+        .cancelReason(ordersCancelDTO.getCancelReason())
+        .build()
+    );
+  }
+
+  /**
+   * 派送订单j
+   *
+   * @param id 订单id
+   */
+  @Override
+  public void delivery(Long id) {
+    orderMapper.update(
+      Orders.builder()
+       .id(id)
+       .status(Orders.DELIVERY_IN_PROGRESS)
+       .build()
+    );
+  }
+
+  /**
+   * 完成订单
+   *
+   * @param id 订单id
+   */
+  @Override
+  public void complete(Long id) {
+    orderMapper.update(
+      Orders.builder()
+      .id(id)
+      .status(Orders.COMPLETED)
+      .build()
+    );
   }
 }
