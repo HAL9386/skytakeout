@@ -46,6 +46,11 @@ sky:
     user-secret-key: mpweixin
     user-ttl: 7200000
     user-token-name: authentication
+  alioss:
+    access-key-secret: ${sky.alioss.access-key-secret}
+    access-key-id: ${sky.alioss.access-key-id}
+    bucket-name: ${sky.alioss.bucket-name}
+    endpoint: ${sky.alioss.endpoint}
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
