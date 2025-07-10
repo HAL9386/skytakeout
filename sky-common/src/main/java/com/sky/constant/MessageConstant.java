@@ -25,4 +25,5 @@ public class MessageConstant {
   public static final String ORDER_STATUS_ERROR = "订单状态错误";
   public static final String ORDER_NOT_FOUND = "订单不存在";
   public static final String SETMEAL_NOT_SELECTED = "请选择要删除的套餐";
+  public static final String ORDER_OUT_OF_DELIVERY_AREA = "地址超出配送范围";
 }

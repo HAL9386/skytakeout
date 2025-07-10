@@ -13,6 +13,7 @@ import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
+import com.sky.utils.BaiduGeoUtil;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
@@ -35,15 +36,18 @@ public class OrderServiceImpl implements OrderService {
   private final ShoppingCartMapper shoppingCartMapper;
   private final UserMapper userMapper;
   private final WeChatPayUtil weChatPayUtil;
+  private final BaiduGeoUtil baiduGeoUtil;
 
   public OrderServiceImpl(OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, AddressBookMapper addressBookMapper,
-                          ShoppingCartMapper shoppingCartMapper, UserMapper userMapper, WeChatPayUtil weChatPayUtil) {
+                          ShoppingCartMapper shoppingCartMapper, UserMapper userMapper, WeChatPayUtil weChatPayUtil,
+                          BaiduGeoUtil baiduGeoUtil) {
     this.orderMapper = orderMapper;
     this.orderDetailMapper = orderDetailMapper;
     this.addressBookMapper = addressBookMapper;
     this.shoppingCartMapper = shoppingCartMapper;
     this.userMapper = userMapper;
     this.weChatPayUtil = weChatPayUtil;
+    this.baiduGeoUtil = baiduGeoUtil;
   }
 
   /**
@@ -59,6 +63,13 @@ public class OrderServiceImpl implements OrderService {
     AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
     if (addressBook == null) {
       throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
+    }
+    try {
+      if (baiduGeoUtil.calculateDistance(addressBook.getDetail()) > 5500.0) {
+        throw new OrderBusinessException(MessageConstant.ORDER_OUT_OF_DELIVERY_AREA);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
     List<ShoppingCart> cartList = shoppingCartMapper.list(BaseContext.getCurrentId());
     if (cartList == null || cartList.isEmpty()) {
