@@ -204,32 +204,30 @@ public class OrderServiceImpl implements OrderService {
   }
 
   /**
-   * 再来一单
+   * 再来一单，添加到购物车
    *
    * @param id 订单id
    */
-  @Transactional(rollbackFor = {Exception.class})
   @Override
   public void repetition(Long id) {
     OrderVO orderWithDetail = orderMapper.getById(id);
-    Orders order = new Orders();
-    BeanUtils.copyProperties(orderWithDetail, order);
-    order.setId(null);
-    order.setNumber(String.valueOf(System.currentTimeMillis()));
-    order.setStatus(Orders.PENDING_PAYMENT);
-    order.setOrderTime(LocalDateTime.now());
-    order.setPayStatus(Orders.UN_PAID);
-    orderMapper.insert(order);
     List<OrderDetail> orderDetailList = orderWithDetail.getOrderDetailList();
-    List<OrderDetail> newOrderDetailList = new ArrayList<>();
+    List<ShoppingCart> cartList = new ArrayList<>();
     for (OrderDetail orderDetail : orderDetailList) {
-      OrderDetail newOrderDetail = new OrderDetail();
-      BeanUtils.copyProperties(orderDetail, newOrderDetail);
-      newOrderDetail.setId(null);
-      newOrderDetail.setOrderId(order.getId());
-      newOrderDetailList.add(newOrderDetail);
+      ShoppingCart cartItem = ShoppingCart.builder()
+        .userId(BaseContext.getCurrentId())
+        .name(orderDetail.getName())
+        .image(orderDetail.getImage())
+        .dishId(orderDetail.getDishId())
+        .setmealId(orderDetail.getSetmealId())
+        .dishFlavor(orderDetail.getDishFlavor())
+        .number(orderDetail.getNumber())
+        .amount(orderDetail.getAmount())
+        .createTime(LocalDateTime.now())
+        .build();
+      cartList.add(cartItem);
     }
-    orderDetailMapper.insertBatch(newOrderDetailList);
+    shoppingCartMapper.insertBatch(cartList);
   }
 
   /**
@@ -306,9 +304,9 @@ public class OrderServiceImpl implements OrderService {
   public void delivery(Long id) {
     orderMapper.update(
       Orders.builder()
-       .id(id)
-       .status(Orders.DELIVERY_IN_PROGRESS)
-       .build()
+        .id(id)
+        .status(Orders.DELIVERY_IN_PROGRESS)
+        .build()
     );
   }
 
@@ -321,9 +319,9 @@ public class OrderServiceImpl implements OrderService {
   public void complete(Long id) {
     orderMapper.update(
       Orders.builder()
-      .id(id)
-      .status(Orders.COMPLETED)
-      .build()
+        .id(id)
+        .status(Orders.COMPLETED)
+        .build()
     );
   }
 }
