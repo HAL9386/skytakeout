@@ -54,3 +54,8 @@ sky:
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
+  shop:
+    address: ${sky.shop.address}
+    longitude: ${sky.shop.longitude}
+    latitude: ${sky.shop.latitude}
+    baidu-ak: ${sky.shop.baidu-ak}
