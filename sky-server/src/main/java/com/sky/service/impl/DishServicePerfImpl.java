@@ -6,12 +6,10 @@ import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Primary
 @Service
 public class DishServicePerfImpl extends DishServiceImpl implements DishService {
 
