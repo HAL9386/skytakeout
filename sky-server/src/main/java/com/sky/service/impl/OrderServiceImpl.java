@@ -1,9 +1,11 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.OrderNotifyTypeConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.*;
 import com.sky.entity.*;
@@ -14,19 +16,20 @@ import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.BaiduGeoUtil;
-import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -34,20 +37,24 @@ public class OrderServiceImpl implements OrderService {
   private final OrderDetailMapper orderDetailMapper;
   private final AddressBookMapper addressBookMapper;
   private final ShoppingCartMapper shoppingCartMapper;
-  private final UserMapper userMapper;
-  private final WeChatPayUtil weChatPayUtil;
+//  private final UserMapper userMapper;
+//  private final WeChatPayUtil weChatPayUtil;
   private final BaiduGeoUtil baiduGeoUtil;
+  private final WebSocketServer webSocketServer;
 
   public OrderServiceImpl(OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, AddressBookMapper addressBookMapper,
-                          ShoppingCartMapper shoppingCartMapper, UserMapper userMapper, WeChatPayUtil weChatPayUtil,
-                          BaiduGeoUtil baiduGeoUtil) {
+                          ShoppingCartMapper shoppingCartMapper,
+//                          UserMapper userMapper,
+//                          WeChatPayUtil weChatPayUtil,
+                          BaiduGeoUtil baiduGeoUtil, WebSocketServer webSocketServer) {
     this.orderMapper = orderMapper;
     this.orderDetailMapper = orderDetailMapper;
     this.addressBookMapper = addressBookMapper;
     this.shoppingCartMapper = shoppingCartMapper;
-    this.userMapper = userMapper;
-    this.weChatPayUtil = weChatPayUtil;
+//    this.userMapper = userMapper;
+//    this.weChatPayUtil = weChatPayUtil;
     this.baiduGeoUtil = baiduGeoUtil;
+    this.webSocketServer = webSocketServer;
   }
 
   /**
@@ -121,25 +128,28 @@ public class OrderServiceImpl implements OrderService {
    * @param ordersPaymentDTO 订单支付信息
    * @return orderPaymentVO 订单支付结果
    */
-  public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception {
+  public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) {
     // 当前登录用户id
-    Long userId = BaseContext.getCurrentId();
-    User user = userMapper.getById(userId);
+//    Long userId = BaseContext.getCurrentId();
+//    User user = userMapper.getById(userId);
 
     //调用微信支付接口，生成预支付交易单
-    JSONObject jsonObject = weChatPayUtil.pay(
-      ordersPaymentDTO.getOrderNumber(), //商户订单号
-      new BigDecimal("0.01"), //支付金额，单位 元
-      "苍穹外卖订单", //商品描述
-      user.getOpenid() //微信用户的openid
-    );
+//    JSONObject jsonObject = weChatPayUtil.pay(
+//      ordersPaymentDTO.getOrderNumber(), //商户订单号
+//      new BigDecimal("0.01"), //支付金额，单位 元
+//      "苍穹外卖订单", //商品描述
+//      user.getOpenid() //微信用户的openid
+//    );
+//    if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
+//      throw new OrderBusinessException("该订单已支付");
+//    }
 
-    if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
-      throw new OrderBusinessException("该订单已支付");
-    }
-
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("code", "ORDERPAID");
     OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
     vo.setPackageStr(jsonObject.getString("package"));
+
+    paySuccess(ordersPaymentDTO.getOrderNumber());
 
     return vo;
   }
@@ -163,6 +173,12 @@ public class OrderServiceImpl implements OrderService {
       .build();
 
     orderMapper.update(orders);
+
+    Map<String, Object> map = new HashMap<>();
+    map.put("type", OrderNotifyTypeConstant.REMINDER);
+    map.put("orderId", ordersDB.getId());
+    map.put("content", "订单号：" + ordersDB.getNumber());
+    webSocketServer.sendToAllClient(JSON.toJSONString(map));
   }
 
   /**

@@ -29,7 +29,7 @@ public class WebSocketServer {
    */
   @OnOpen
   public void onOpen(Session session, @PathParam("sid") String sid) {
-    System.out.println("客户端" + " [" + sid + "] " + "建立连接");
+    log.info("客户端" + " [{}] " + "建立连接", sid);
     sessionMap.put(sid, session);
   }
 
@@ -40,7 +40,7 @@ public class WebSocketServer {
    */
   @OnMessage
   public void onMessage(String message, @PathParam("sid") String sid) {
-    System.out.println("收到来自客户端" + " [" + sid + "] " + "的信息: " + message);
+    log.info("收到来自客户端" + " [{}] " + "的信息: {}", sid, message);
   }
 
   /**
@@ -51,7 +51,7 @@ public class WebSocketServer {
   @SuppressWarnings("resource")
   @OnClose
   public void onClose(@PathParam("sid") String sid) {
-    System.out.println("连接断开 " + " [" + sid + "] ");
+    log.info("连接断开 " + " [{}] ", sid);
     sessionMap.remove(sid);
   }
 
