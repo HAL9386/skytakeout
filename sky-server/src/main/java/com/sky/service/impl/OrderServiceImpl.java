@@ -266,12 +266,12 @@ public class OrderServiceImpl implements OrderService {
   /**
    * 接单
    *
-   * @param id 订单id
+   * @param ordersConfirmDTO 订单确认信息
    */
   @Override
-  public void confirm(Long id) {
+  public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
     orderMapper.update(Orders.builder()
-      .id(id)
+      .id(ordersConfirmDTO.getId())
       .status(Orders.CONFIRMED)
       .build()
     );

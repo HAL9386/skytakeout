@@ -71,9 +71,9 @@ public interface OrderService {
   /**
    * 订单确认接单
    *
-   * @param id 订单id
+   * @param ordersConfirmDTO 订单确认信息
    */
-  void confirm(Long id);
+  void confirm(OrdersConfirmDTO ordersConfirmDTO);
 
   /**
    * 订单拒单
