@@ -23,14 +23,14 @@ public class WorkspaceController {
   }
 
   /**
-   * 获取营业数据
+   * 获取今日营业数据
    *
    * @return BusinessDataVO
    */
-  @ApiOperation("获取营业数据")
+  @ApiOperation("获取今日营业数据")
   @GetMapping("/businessData")
   public Result<BusinessDataVO> getBusinessData() {
-    log.info("获取营业数据");
+    log.info("获取今日营业数据");
     BusinessDataVO businessDataVO = workspaceService.getBusinessData();
     return Result.success(businessDataVO);
   }
