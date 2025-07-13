@@ -36,7 +36,7 @@ public interface UserMapper {
   /**
    * 根据条件统计用户数量
    *
-   * @param queryCondition 查询条件
+   * @param queryCondition 查询条件{begin: 开始时间, end: 结束时间}
    * @return 用户数量
    */
   Integer countByMap(Map<String, Object> queryCondition);

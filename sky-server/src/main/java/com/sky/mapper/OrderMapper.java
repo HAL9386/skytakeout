@@ -81,10 +81,10 @@ public interface OrderMapper {
   Double sumByMap(Map<String, Object> queryCondition);
 
   /**
-   * 根据条件统计用户数量
+   * 根据条件统计订单数量
    *
-   * @param queryCondition 查询条件
-   * @return 用户数量
+   * @param queryCondition 查询条件{begin: 开始时间, end: 结束时间, status: 订单状态}
+   * @return 订单数量
    */
   Integer countByMap(Map<String, Object> queryCondition);
 
