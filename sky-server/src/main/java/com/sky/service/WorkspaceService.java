@@ -1,7 +1,9 @@
 package com.sky.service;
 
 import com.sky.vo.BusinessDataVO;
+import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
+import com.sky.vo.SetmealOverViewVO;
 
 public interface WorkspaceService {
   /**
@@ -17,4 +19,18 @@ public interface WorkspaceService {
    * @return OrderOverViewVO
    */
   OrderOverViewVO getOrderOverView();
+
+  /**
+   * 获取菜品概览
+   *
+   * @return DishOverViewVO
+   */
+  DishOverViewVO getDishOverView();
+
+  /**
+   * 获取套餐概览
+   *
+   * @return SetmealOverViewVO
+   */
+  SetmealOverViewVO getSetmealOverView();
 }

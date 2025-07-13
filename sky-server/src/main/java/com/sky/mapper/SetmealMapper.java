@@ -6,6 +6,7 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishItemVO;
+import com.sky.vo.SetmealOverViewVO;
 import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -80,4 +81,12 @@ public interface SetmealMapper {
    */
   @Select("select sd.name, sd.copies, d.image, d.description from setmeal_dish as sd left join dish as d on sd.dish_id = d.id where sd.setmeal_id = #{setmealId}")
   List<DishItemVO> getDishItemBySetmealId(Long setmealId);
+
+  /**
+   * 根据状态统计套餐数量
+   *
+   * @return 套餐数量统计结果
+   */
+  @Select("select sum(IF(status = 1, 1, 0)) as sold, sum(IF(status = 0, 1, 0)) as discontinued from setmeal")
+  SetmealOverViewVO countByStatusGroup();
 }

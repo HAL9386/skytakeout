@@ -2,11 +2,15 @@ package com.sky.service.impl;
 
 import com.sky.dto.OrderOverviewDTO;
 import com.sky.entity.Orders;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.OrderMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.WorkspaceService;
 import com.sky.vo.BusinessDataVO;
+import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
+import com.sky.vo.SetmealOverViewVO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,10 +25,14 @@ import java.util.stream.Collectors;
 public class WorkspaceServiceImpl implements WorkspaceService {
   private final UserMapper userMapper;
   private final OrderMapper orderMapper;
+  private final DishMapper dishMapper;
+  private final SetmealMapper setmealMapper;
 
-  public WorkspaceServiceImpl(UserMapper userMapper, OrderMapper orderMapper) {
+  public WorkspaceServiceImpl(UserMapper userMapper, OrderMapper orderMapper, DishMapper dishMapper, SetmealMapper setmealMapper) {
     this.userMapper = userMapper;
     this.orderMapper = orderMapper;
+    this.dishMapper = dishMapper;
+    this.setmealMapper = setmealMapper;
   }
 
   /**
@@ -77,5 +85,25 @@ public class WorkspaceServiceImpl implements WorkspaceService {
       .deliveredOrders(orderCountMap.getOrDefault(Orders.CONFIRMED, 0))
       .waitingOrders(orderCountMap.getOrDefault(Orders.TO_BE_CONFIRMED, 0))
       .build();
+  }
+
+  /**
+   * 获取菜品概览
+   *
+   * @return DishOverViewVO
+   */
+  @Override
+  public DishOverViewVO getDishOverView() {
+    return dishMapper.countByStatusGroup();
+  }
+
+  /**
+   * 获取套餐概览
+   *
+   * @return SetmealOverViewVO
+   */
+  @Override
+  public SetmealOverViewVO getSetmealOverView() {
+    return setmealMapper.countByStatusGroup();
   }
 }

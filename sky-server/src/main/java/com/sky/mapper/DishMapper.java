@@ -5,6 +5,7 @@ import com.sky.annotation.AutoFill;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.enumeration.OperationType;
+import com.sky.vo.DishOverViewVO;
 import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
@@ -91,4 +92,12 @@ public interface DishMapper {
    * @return 菜品列表
    */
   List<DishVO> listWithFlavor(Dish dish);
+
+  /**
+   * 根据菜品起售状态分组统计菜品数量
+   *
+   * @return 菜品统计数量
+   */
+  @Select("select sum(IF(status = 1, 1, 0)) as sold, sum(IF(status = 0, 1, 0)) as discontinued from dish")
+  DishOverViewVO countByStatusGroup();
 }
