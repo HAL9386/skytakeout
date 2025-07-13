@@ -5,6 +5,7 @@ import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrderOverviewDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -57,11 +58,16 @@ public interface OrderMapper {
   /**
    * 根据订单状态统计订单数量
    *
-   * @param status 订单状态
    * @return 订单数量
    */
-//  @Select("select count(*) from orders where status = #{status}")
-  Integer countByStatus(Integer status);
+  @Select("""
+    select
+      sum(if(status = 3, 1, 0)) as confirmed,
+      sum(if(status = 2, 1, 0)) as toBeConfirmed,
+      sum(if(status = 4, 1, 0)) as deliveryInProgress
+    from orders
+   """)
+  OrderStatisticsVO countBy3StatusGroup();
 
   /**
    * 根据订单状态和订单时间查询订单
