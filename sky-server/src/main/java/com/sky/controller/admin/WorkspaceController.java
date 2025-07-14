@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @Api(tags = "工作台相关接口")
 @Slf4j
 @RequestMapping("/admin/workspace")
@@ -33,7 +35,7 @@ public class WorkspaceController {
   @GetMapping("/businessData")
   public Result<BusinessDataVO> getBusinessData() {
     log.info("获取今日营业数据");
-    BusinessDataVO businessDataVO = workspaceService.getBusinessData();
+    BusinessDataVO businessDataVO = workspaceService.getBusinessData(LocalDate.now(), LocalDate.now());
     return Result.success(businessDataVO);
   }
 

@@ -41,10 +41,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
    * @return BusinessDataVO
    */
   @Override
-  public BusinessDataVO getBusinessData() {
+  public BusinessDataVO getBusinessData(LocalDate begin, LocalDate end) {
     Map<String, Object> queryCondition = new HashMap<>();
-    queryCondition.put("begin", LocalDateTime.of(LocalDate.now(), LocalTime.MIN));
-    queryCondition.put("end", LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
+    queryCondition.put("begin", LocalDateTime.of(begin, LocalTime.MIN));
+    queryCondition.put("end", LocalDateTime.of(end, LocalTime.MAX));
     Integer newUsers = userMapper.countByMap(queryCondition);
     newUsers = newUsers == null ? 0 : newUsers;
     Integer totalOrders = orderMapper.countByMap(queryCondition);
